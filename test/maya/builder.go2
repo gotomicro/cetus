@@ -1,0 +1,39 @@
+package maya
+
+import (
+	"fmt"
+)
+
+// type Orm interface {
+// 	Insert(data ...interface{})(sql.Result, error)
+// }
+
+// type Orm[T any] interface {
+// 	Insert(data ...T) (sql.Result, error)
+// }
+
+type HttpClient struct {
+	endpoint string
+}
+
+type GetBuilder[T any] struct {
+	client *HttpClient
+	path   string
+}
+
+func (g *GetBuilder[T]) Path(path string) *GetBuilder[T] {
+	g.path = path
+	return g
+}
+
+func (g *GetBuilder[T]) Do() T {
+	// 真实发出 HTTP 请求
+	var t T
+	url := g.client.endpoint + g.path
+	fmt.Println(url)
+	return t
+}
+
+// func NewGetRequest[T any](client *HttpClient) *GetBuilder {
+// 	return &GetBuilder[T]{client: client}
+// }
