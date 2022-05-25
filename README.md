@@ -7,3 +7,19 @@
 Common Tool set based on go 1.18
 
 
+## Project Introduction
+
+This project is a tool library project.
+
+### /example
+
+Example code for function calls under the PKG folder.
+
+### /pkg
+
+Parts that can be called in your projects.
+
+### /test
+
+A place where some feature or new feature is tested.
+

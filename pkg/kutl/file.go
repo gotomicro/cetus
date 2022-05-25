@@ -1,10 +1,13 @@
-package kc
+package kutl
 
 import (
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 // GetCurrentDirectory ...
@@ -26,4 +29,22 @@ func IsFileExists(path string) (bool, error) {
 		return false, nil
 	}
 	return false, err
+}
+
+func DownloadPictureBytes(url string, timeout time.Duration) (res []byte, err error) {
+	client := http.Client{
+		Timeout: timeout,
+	}
+	resp, err := client.Get(url)
+	if err != nil {
+		return
+	}
+	defer func() { _ = resp.Body.Close() }()
+	fileByte := make([]byte, 0)
+	fileByte, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+	return fileByte, nil
+
 }
