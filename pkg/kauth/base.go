@@ -13,10 +13,12 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/gotomicro/cetus/pkg/kerror"
 	"github.com/gotomicro/ego/core/elog"
+	"github.com/jmespath/go-jmespath"
 	"github.com/spf13/cast"
 	"golang.org/x/oauth2"
+
+	"github.com/gotomicro/cetus/pkg/kerror"
 )
 
 // Connector ..

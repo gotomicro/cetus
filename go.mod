@@ -8,6 +8,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/googollee/go-socket.io v1.6.2
 	github.com/gotomicro/ego v1.0.0
+	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 	github.com/mailru/easyjson v0.7.7
 	github.com/segmentio/kafka-go v0.4.31
 	github.com/spf13/cast v1.4.1
