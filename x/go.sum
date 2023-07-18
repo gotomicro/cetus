@@ -54,6 +54,8 @@ github.com/google/go-cmp v0.5.6/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/
 github.com/google/go-cmp v0.5.7 h1:81/ik6ipDQS2aGcBfIN5dHDB36BwrStyeAQquSYCV4o=
 github.com/google/go-cmp v0.5.7/go.mod h1:n+brtR0CgQNWTVd5ZUFpTBC8YFBDLK/h/bpaJ8/DtOE=
 github.com/google/uuid v1.1.2/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/gotomicro/cetus/l v0.0.0-20230718164245-d74413670cc2 h1:0pleKPsOoxnkUhjlv6PoyDsL/Us3RwtgOudZnqWGwyU=
+github.com/gotomicro/cetus/l v0.0.0-20230718164245-d74413670cc2/go.mod h1:tVQMk4cc/KDFf48fJJao8yn4OsAuVNVXFyJkWn4DlTc=
 github.com/gotomicro/ego v1.1.12 h1:mepKRNEO8MF8R6/6A/S0//yp1nlme6VX0knxk4XAYrU=
 github.com/gotomicro/ego v1.1.12/go.mod h1:Vjb7pD9SUV9xmMfhKkdsLLa2zRxpt2n1DWlyAYAKBiI=
 github.com/gotomicro/logrotate v0.0.0-20211108034117-46d53eedc960 h1:vp5ls3l11a1XCaU3pJUBV85PwRW47qybqdYEIWCGLIo=

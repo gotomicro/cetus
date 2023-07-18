@@ -6,14 +6,23 @@ import (
 	"math"
 	"strconv"
 
+	"github.com/gotomicro/cetus/l"
 	"github.com/gotomicro/ego/core/elog"
-	"go.uber.org/zap"
 )
 
 func S2I64(str string) int64 {
 	i, err := strconv.ParseInt(str, 10, 64)
 	if err != nil {
-		elog.Warn("S2I64 fail", zap.Error(err))
+		elog.Warn("S2I64 fail", l.E(err))
+		return 0
+	}
+	return i
+}
+
+func S2UI64(str string) uint64 {
+	i, err := strconv.ParseUint(str, 10, 64)
+	if err != nil {
+		elog.Warn("S2UI64 fail", l.E(err))
 		return 0
 	}
 	return i
