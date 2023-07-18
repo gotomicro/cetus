@@ -1,4 +1,4 @@
-package kauth
+package xauth
 
 var OAuthService *OAuths
 

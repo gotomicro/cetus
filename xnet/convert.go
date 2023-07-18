@@ -1,4 +1,4 @@
-package knet
+package xnet
 
 import (
 	"fmt"

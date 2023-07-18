@@ -1,4 +1,4 @@
-package kauth
+package xauth
 
 type Error struct {
 	s string
