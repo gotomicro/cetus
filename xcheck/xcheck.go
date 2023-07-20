@@ -3,6 +3,7 @@ package xcheck
 import (
 	"time"
 
+	"github.com/gotomicro/cetus/l"
 	"github.com/gotomicro/ego/core/elog"
 
 	"github.com/gotomicro/cetus/xcheck/model/dto"
@@ -72,9 +73,7 @@ func (a *xcheck) calculateData() {
 		return
 	}
 	diff := (float64(current) - float64(a.memAvg)) * 100 / float64(a.memAvg)
-
-	elog.Debug("cal", elog.Int("avg", int(a.memAvg)), elog.Int("size", int(current)), elog.Int("diffPercent", int(diff)), elog.Int("usedPercent", int(usedPercent)), elog.Any("memOpts", a.opts.memOpts))
-
+	elog.Debug("cal", l.UI64("avg", a.memAvg), l.UI64("size", current), l.F64("diffPercent", diff), l.F64("usedPercent", usedPercent), l.A("memOpts", a.opts.memOpts))
 	if current >= a.opts.memOpts.TriggerValue && uint64(diff) >= a.opts.memOpts.TriggerDiff {
 		a.pprof(dto.AttachInfo{
 			CurrentAbs:        current,
