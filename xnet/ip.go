@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/peer"
 )
 
-func Local() (ip string, err error) {
+func GetLocalIP() (ip string, err error) {
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {
 		fmt.Println(err)
@@ -30,7 +30,7 @@ func Local() (ip string, err error) {
 
 // GetPeerIP 获取对端ip
 func GetPeerIP(ctx context.Context) string {
-	clientIP := GrpcHeaderValue(ctx, "client-ip")
+	clientIP := ctxValue(ctx, "client-ip")
 	if clientIP != "" {
 		return clientIP
 	}
@@ -50,7 +50,7 @@ func GetPeerIP(ctx context.Context) string {
 }
 
 // GrpcHeaderValue 获取context value
-func GrpcHeaderValue(ctx context.Context, key string) string {
+func ctxValue(ctx context.Context, key string) string {
 	if key == "" {
 		return ""
 	}
@@ -60,4 +60,15 @@ func GrpcHeaderValue(ctx context.Context, key string) string {
 	}
 	// 小写
 	return strings.Join(md.Get(key), ";")
+}
+
+func GetOutBoundIP() (ip string, err error) {
+	conn, err := net.Dial("udp", "8.8.8.8:53")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	localAddr := conn.LocalAddr().(*net.UDPAddr)
+	ip = strings.Split(localAddr.String(), ":")[0]
+	return
 }
