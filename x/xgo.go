@@ -1,26 +1,26 @@
-package xgo
+package x
 
 import (
 	"fmt"
 	"log"
 	"runtime"
 
-	"go.uber.org/zap"
+	"github.com/gotomicro/cetus/l"
 )
 
 // Go goroutine
 func Go(fn func()) {
-	go func() { _ = try2(fn, nil) }()
+	go func() { _ = try(fn, nil) }()
 }
 
-func try2(fn func(), cleaner func()) (ret error) {
+func try(fn func(), cleaner func()) (ret error) {
 	if cleaner != nil {
 		defer cleaner()
 	}
 	defer func() {
 		if err := recover(); err != nil {
 			_, file, line, _ := runtime.Caller(5)
-			log.Print("recover", zap.Any("err", err), zap.String("line", fmt.Sprintf("%s:%d", file, line)))
+			log.Print("recover", l.A("err", err), l.S("line", fmt.Sprintf("%s:%d", file, line)))
 			if _, ok := err.(error); ok {
 				ret = err.(error)
 			} else {
