@@ -7,7 +7,7 @@ import (
 
 	"github.com/gotomicro/cetus/xnet"
 
-	"github.com/gotomicro/cetus/xcheck/model/dto"
+	"github.com/gotomicro/cetus/epprof/model/dto"
 )
 
 func Webhook(fw dto.Webhook, attach dto.AttachInfo) {

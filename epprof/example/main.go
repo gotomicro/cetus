@@ -5,12 +5,12 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/gotomicro/cetus/xcheck"
+	"github.com/gotomicro/cetus/epprof"
 )
 
 func main() {
-	a, _ := xcheck.New(
-		xcheck.WithMemOpts(0, 0, 0, 0),
+	a, _ := epprof.New(
+		epprof.WithMemOpts(0, 0, 0, 0),
 	)
 	_ = a.EnableMem().Start()
 	go func() {
@@ -22,7 +22,7 @@ func main() {
 
 	time.Sleep(time.Second * 10)
 	// reload the config
-	_ = a.Apply(xcheck.WithMemOpts(1024, 10, 20, time.Hour))
+	_ = a.Apply(epprof.WithMemOpts(1024, 10, 20, time.Hour))
 
 	time.Sleep(time.Hour)
 }

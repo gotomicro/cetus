@@ -1,4 +1,4 @@
-package xcheck
+package epprof
 
 import (
 	"time"
@@ -6,12 +6,12 @@ import (
 	"github.com/gotomicro/cetus/l"
 	"github.com/gotomicro/ego/core/elog"
 
-	"github.com/gotomicro/cetus/xcheck/model/dto"
-	"github.com/gotomicro/cetus/xcheck/module/forward/webhook"
-	"github.com/gotomicro/cetus/xcheck/module/monitor"
+	"github.com/gotomicro/cetus/epprof/model/dto"
+	"github.com/gotomicro/cetus/epprof/module/forward/webhook"
+	"github.com/gotomicro/cetus/epprof/module/monitor"
 )
 
-type xcheck struct {
+type Epprof struct {
 	opts           *options
 	memAvg         uint64
 	memCoolingTime time.Time
@@ -19,25 +19,25 @@ type xcheck struct {
 	Forwarder dto.Forwarder
 }
 
-// New is the entry of xcheck
+// New is the entry of epprof
 // 1. start monitor
 // 2. storage data
 // 3. calculate data
 // 4. generate pprof files
 // 5. upload to oss
-func New(opts ...Option) (*xcheck, error) {
-	xcheck := &xcheck{
+func New(opts ...Option) (*Epprof, error) {
+	e := &Epprof{
 		opts: newOptions(),
 	}
 	for _, o := range opts {
-		if err := o.apply(xcheck.opts); err != nil {
+		if err := o.apply(e.opts); err != nil {
 			return nil, err
 		}
 	}
-	return xcheck, nil
+	return e, nil
 }
 
-func (a *xcheck) Apply(opts ...Option) error {
+func (a *Epprof) Apply(opts ...Option) error {
 	for _, o := range opts {
 		if err := o.apply(a.opts); err != nil {
 			return err
@@ -47,12 +47,12 @@ func (a *xcheck) Apply(opts ...Option) error {
 }
 
 // EnableMem enables the mem dump.
-func (a *xcheck) EnableMem() *xcheck {
+func (a *Epprof) EnableMem() *Epprof {
 	a.opts.memOpts.Enable = true
 	return a
 }
 
-func (a *xcheck) Start() error {
+func (a *Epprof) Start() error {
 	ticker := time.NewTicker(time.Second)
 	go func() {
 		for {
@@ -65,7 +65,7 @@ func (a *xcheck) Start() error {
 	return nil
 }
 
-func (a *xcheck) calculateData() {
+func (a *Epprof) calculateData() {
 	current, usedPercent := monitor.ReadMemStats()
 
 	if a.memAvg == 0 {
@@ -86,7 +86,7 @@ func (a *xcheck) calculateData() {
 	a.memAvg = (a.memAvg + current) / 2
 }
 
-func (a *xcheck) pprof(attach dto.AttachInfo) {
+func (a *Epprof) pprof(attach dto.AttachInfo) {
 	if a.memCoolingTime.After(time.Now()) {
 		elog.Info("coolingTime")
 		return

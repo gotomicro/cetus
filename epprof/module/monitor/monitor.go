@@ -5,7 +5,7 @@ import (
 
 	"github.com/shirou/gopsutil/v3/process"
 
-	"github.com/gotomicro/cetus/xcheck/model/dto"
+	"github.com/gotomicro/cetus/epprof/model/dto"
 )
 
 func New(m dto.Monitor) {

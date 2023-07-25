@@ -1,4 +1,4 @@
-package xcheck
+package epprof
 
 import (
 	"time"

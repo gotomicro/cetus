@@ -1,4 +1,4 @@
-module github.com/gotomicro/cetus/xcheck
+module github.com/gotomicro/cetus/epprof
 
 go 1.20
 
