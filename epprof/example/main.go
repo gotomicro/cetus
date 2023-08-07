@@ -5,10 +5,14 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/gotomicro/ego/core/elog"
+
 	"github.com/gotomicro/cetus/epprof"
 )
 
 func main() {
+	elog.DefaultLogger.SetLevel(elog.DebugLevel)
+
 	a, _ := epprof.New(
 		epprof.WithMemOpts(0, 0, 0, 0),
 	)
