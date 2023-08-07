@@ -1,6 +1,7 @@
 package e
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -18,4 +19,12 @@ func NewHTTPError(code int, message ...interface{}) *HTTPError {
 		he.Message = message[0]
 	}
 	return he
+}
+
+// Error makes it compatible with `error` interface.
+func (he *HTTPError) Error() string {
+	if he.Internal == nil {
+		return fmt.Sprintf("code=%d, message=%v", he.Code, he.Message)
+	}
+	return fmt.Sprintf("code=%d, message=%v, internal=%v", he.Code, he.Message, he.Internal)
 }
