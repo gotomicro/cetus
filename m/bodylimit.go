@@ -60,7 +60,7 @@ func BodyLimitWithConfig(config BodyLimitConfig) gin.HandlerFunc {
 	if config.Skipper == nil {
 		config.Skipper = DefaultBodyLimitConfig.Skipper
 	}
-	limit, err := x.BytesParse(config.Limit)
+	limit, err := x.ByteParse(config.Limit)
 	if err != nil {
 		panic(fmt.Errorf("invalid body-limit=%s", config.Limit))
 	}
