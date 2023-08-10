@@ -6,7 +6,8 @@ import (
 	"sync"
 
 	"github.com/gin-gonic/gin"
-	"github.com/labstack/gommon/bytes"
+	"github.com/gotomicro/cetus/e"
+	"github.com/gotomicro/cetus/x"
 
 	"github.com/gotomicro/cetus/m/pkg"
 )
@@ -59,26 +60,23 @@ func BodyLimitWithConfig(config BodyLimitConfig) gin.HandlerFunc {
 	if config.Skipper == nil {
 		config.Skipper = DefaultBodyLimitConfig.Skipper
 	}
-
-	limit, err := bytes.Parse(config.Limit)
+	limit, err := x.BytesParse(config.Limit)
 	if err != nil {
-		panic(fmt.Errorf("echo: invalid body-limit=%s", config.Limit))
+		panic(fmt.Errorf("invalid body-limit=%s", config.Limit))
 	}
 	config.limit = limit
 	pool := limitedReaderPool(config)
-
 	return func(c *gin.Context) {
 		if config.Skipper(c) {
-			return next(c)
+			c.Next()
+			return
 		}
-
-		req := c.Request()
-
+		req := c.Request
 		// Based on content length
 		if req.ContentLength > config.limit {
-			return echo.ErrStatusRequestEntityTooLarge
+			_ = c.Error(e.ErrStatusRequestEntityTooLarge)
+			return
 		}
-
 		// Based on content read
 		r := pool.Get().(*limitedReader)
 		r.Reset(req.Body, c)
@@ -93,7 +91,7 @@ func (r *limitedReader) Read(b []byte) (n int, err error) {
 	n, err = r.reader.Read(b)
 	r.read += int64(n)
 	if r.read > r.limit {
-		return n, echo.ErrStatusRequestEntityTooLarge
+		return n, e.ErrStatusRequestEntityTooLarge
 	}
 	return
 }
