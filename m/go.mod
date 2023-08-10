@@ -1,10 +1,11 @@
-module github.com/gotomicro/cetus/xproxy
+module github.com/gotomicro/cetus/m
 
 go 1.20
 
 require (
 	github.com/gin-gonic/gin v1.9.1
-	github.com/gotomicro/cetus/e v0.0.0-20230807070825-479d9f0128d6
+	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/gotomicro/cetus/e v0.0.0-20230810071423-1c1916251616
 )
 
 require (

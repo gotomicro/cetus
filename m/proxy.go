@@ -1,4 +1,4 @@
-package xproxy
+package m
 
 import (
 	"fmt"
@@ -16,13 +16,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gotomicro/cetus/e"
+
+	"github.com/gotomicro/cetus/m/pkg"
 )
 
 type (
 	// ProxyConfig defines the config for Proxy middleware.
 	ProxyConfig struct {
 		// Skipper defines a function to skip middleware.
-		Skipper Skipper
+		Skipper pkg.Skipper
 
 		// Balancer defines a load balancing technique.
 		// Required.
@@ -91,7 +93,7 @@ type (
 var (
 	// DefaultProxyConfig is the default Proxy middleware config.
 	DefaultProxyConfig = ProxyConfig{
-		Skipper:    DefaultSkipper,
+		Skipper:    pkg.DefaultSkipper,
 		ContextKey: "target",
 	}
 )
@@ -215,7 +217,7 @@ func ProxyWithConfig(config ProxyConfig) gin.HandlerFunc {
 		if config.RegexRewrite == nil {
 			config.RegexRewrite = make(map[*regexp.Regexp]string)
 		}
-		for k, v := range rewriteRulesRegex(config.Rewrite) {
+		for k, v := range pkg.RewriteRulesRegex(config.Rewrite) {
 			config.RegexRewrite[k] = v
 		}
 	}
@@ -230,26 +232,26 @@ func ProxyWithConfig(config ProxyConfig) gin.HandlerFunc {
 		c.Set(config.ContextKey, tgt)
 
 		// Set rewrite path and raw path
-		rewritePath(config.RegexRewrite, req)
+		pkg.RewritePath(config.RegexRewrite, req)
 
 		// Fix header
 		// Basically it's not good practice to unconditionally pass incoming x-real-ip header to upstream.
 		// However, for backward compatibility, legacy behavior is preserved unless you configure Echo#IPExtractor.
-		if req.Header.Get(HeaderXRealIP) == "" || c.ClientIP() != "" {
-			req.Header.Set(HeaderXRealIP, c.ClientIP())
+		if req.Header.Get(pkg.HeaderXRealIP) == "" || c.ClientIP() != "" {
+			req.Header.Set(pkg.HeaderXRealIP, c.ClientIP())
 		}
-		if req.Header.Get(HeaderXForwardedProto) == "" {
-			req.Header.Set(HeaderXForwardedProto, c.Request.URL.Scheme)
+		if req.Header.Get(pkg.HeaderXForwardedProto) == "" {
+			req.Header.Set(pkg.HeaderXForwardedProto, c.Request.URL.Scheme)
 		}
-		if IsWebSocket(c) && req.Header.Get(HeaderXForwardedFor) == "" { // For HTTP, it is automatically set by Go HTTP reverse proxy.
-			req.Header.Set(HeaderXForwardedFor, c.ClientIP())
+		if IsWebSocket(c) && req.Header.Get(pkg.HeaderXForwardedFor) == "" { // For HTTP, it is automatically set by Go HTTP reverse proxy.
+			req.Header.Set(pkg.HeaderXForwardedFor, c.ClientIP())
 		}
 
 		// Proxy
 		switch {
 		case IsWebSocket(c):
 			proxyRaw(tgt, c).ServeHTTP(c.Writer, req)
-		case req.Header.Get(HeaderAccept) == "text/event-stream":
+		case req.Header.Get(pkg.HeaderAccept) == "text/event-stream":
 		default:
 			proxyHTTP(tgt, c, config).ServeHTTP(c.Writer, req)
 		}
@@ -262,7 +264,7 @@ func ProxyWithConfig(config ProxyConfig) gin.HandlerFunc {
 }
 
 func IsWebSocket(c *gin.Context) bool {
-	upgrade := c.Request.Header.Get(HeaderUpgrade)
+	upgrade := c.Request.Header.Get(pkg.HeaderUpgrade)
 	return strings.ToLower(upgrade) == "websocket"
 }
 

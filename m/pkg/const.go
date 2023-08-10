@@ -1,4 +1,4 @@
-package xproxy
+package pkg
 
 const (
 	HeaderAccept              = "Accept"

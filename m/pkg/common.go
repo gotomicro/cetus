@@ -1,4 +1,4 @@
-package xproxy
+package pkg
 
 import (
 	"net/http"
@@ -33,7 +33,7 @@ func captureTokens(pattern *regexp.Regexp, input string) *strings.Replacer {
 	return strings.NewReplacer(replace...)
 }
 
-func rewriteRulesRegex(rewrite map[string]string) map[*regexp.Regexp]string {
+func RewriteRulesRegex(rewrite map[string]string) map[*regexp.Regexp]string {
 	// Initialize
 	rulesRegex := map[*regexp.Regexp]string{}
 	for k, v := range rewrite {
@@ -48,7 +48,7 @@ func rewriteRulesRegex(rewrite map[string]string) map[*regexp.Regexp]string {
 	return rulesRegex
 }
 
-func rewritePath(rewriteRegex map[*regexp.Regexp]string, req *http.Request) {
+func RewritePath(rewriteRegex map[*regexp.Regexp]string, req *http.Request) {
 	for k, v := range rewriteRegex {
 		replacerRawPath := captureTokens(k, req.URL.EscapedPath())
 		if replacerRawPath != nil {
