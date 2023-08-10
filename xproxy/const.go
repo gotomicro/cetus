@@ -1,4 +1,4 @@
-package middleware
+package xproxy
 
 const (
 	HeaderAccept              = "Accept"

@@ -1,4 +1,4 @@
-package middleware
+package xproxy
 
 import (
 	"net/http"
