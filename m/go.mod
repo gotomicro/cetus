@@ -6,6 +6,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/gotomicro/cetus/e v0.0.0-20230810071423-1c1916251616
+	golang.org/x/time v0.3.0
 )
 
 require (
