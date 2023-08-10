@@ -21,6 +21,11 @@ func NewHTTPError(code int, message ...interface{}) *HTTPError {
 	return he
 }
 
+func (he *HTTPError) WithErr(err error) *HTTPError {
+	he.Internal = err
+	return he
+}
+
 // Error makes it compatible with `error` interface.
 func (he *HTTPError) Error() string {
 	if he.Internal == nil {
