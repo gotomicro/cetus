@@ -1,6 +1,7 @@
 package xpongo
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/flosch/pongo2/v6"
@@ -74,4 +75,9 @@ func MapToContext(m map[string]interface{}) Context {
 		res[k] = v
 	}
 	return res
+}
+
+func (c Context) String() string {
+	tmp, _ := json.Marshal(c)
+	return string(tmp)
 }
