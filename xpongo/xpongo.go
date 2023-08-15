@@ -67,3 +67,11 @@ func (r Render) writeContentType(w http.ResponseWriter, value []string) {
 		header["Content-Type"] = value
 	}
 }
+
+func MapToContext(m map[string]interface{}) Context {
+	res := make(Context)
+	for k, v := range m {
+		res[k] = v
+	}
+	return res
+}
