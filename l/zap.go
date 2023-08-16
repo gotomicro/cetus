@@ -9,8 +9,10 @@ var (
 	I32  = zap.Int32
 	UI32 = zap.Uint32
 	I64  = zap.Int64
+	UI   = zap.Uint
 	UI64 = zap.Uint64
 	F64  = zap.Float64
+	D    = zap.Duration
 	S    = zap.String
 	B    = zap.Bool
 	E    = zap.Error
