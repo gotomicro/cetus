@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/go-resty/resty/v2 v2.7.0
-	github.com/gotomicro/cetus/l v0.0.0-20230720035012-098d6a2cbd7b
+	github.com/gotomicro/cetus/l v0.0.0-20230913025802-aba09cb8158d
 	github.com/gotomicro/cetus/xnet v0.0.0-20230720035012-098d6a2cbd7b
 	github.com/gotomicro/ego v1.1.11
 	github.com/shirou/gopsutil/v3 v3.21.6

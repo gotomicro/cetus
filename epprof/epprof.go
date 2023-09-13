@@ -73,7 +73,7 @@ func (a *Epprof) calculateData() {
 		return
 	}
 	diff := (float64(current) - float64(a.memAvg)) * 100 / float64(a.memAvg)
-	elog.Debug("cal", l.UI64("avg", a.memAvg), l.UI64("size", current), l.F64("diffPercent", diff), l.F64("usedPercent", usedPercent), l.A("memOpts", a.opts.memOpts))
+	elog.Debug("cal", l.U64("avg", a.memAvg), l.U64("size", current), l.F64("diffPercent", diff), l.F64("usedPercent", usedPercent), l.A("memOpts", a.opts.memOpts))
 	if current >= a.opts.memOpts.TriggerValue && uint64(diff) >= a.opts.memOpts.TriggerDiff {
 		a.pprof(dto.AttachInfo{
 			CurrentAbs:        current,
