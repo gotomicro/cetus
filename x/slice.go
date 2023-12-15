@@ -120,3 +120,11 @@ func Ints2String(ints []int) string {
 	}
 	return res
 }
+
+func Strings2Map(ss []string) map[string]struct{} {
+	res := make(map[string]struct{})
+	for _, v := range ss {
+		res[v] = struct{}{}
+	}
+	return res
+}
