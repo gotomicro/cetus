@@ -1,14 +1,13 @@
-package xpt
+package xredis
 
 import (
 	"context"
 	"fmt"
+	"github.com/gotomicro/cetus/xnet"
 	"time"
 
 	"github.com/ego-component/eredis"
 	"github.com/gotomicro/ego/core/elog"
-
-	"github.com/gotomicro/cetus/knet"
 )
 
 const (
@@ -36,7 +35,7 @@ type Preempt struct {
 }
 
 func NewPreempt(ctx context.Context, db *eredis.Component, key string, startFunc, closeFunc func()) *Preempt {
-	ipStr, _ := knet.Local()
+	ipStr, _ := xnet.Local()
 	p := &Preempt{
 		ctx:       ctx,
 		redis:     db,

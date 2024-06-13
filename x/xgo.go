@@ -32,9 +32,9 @@ func try(fn func(), cleaner func()) (ret error) {
 	return nil
 }
 
-// 通过入参 from to 根据 size 对函数调用进行分页查询，闭区间
-// 例如：from=0 to=100 size=10
-// 则会调用 10 次函数，每次入参为 from=0 to=10, from=10 to=20, from=20 to=30, ..., from=90 to=100
+// Page parses the function call by size from to, with closed intervals.
+// For example: from=0 to=100 size=10
+// then the function is called 10 times, each time with from=0 to=10, from=10 to=20, from=20 to=30, ... , from=90 to=100
 func Page(from, to, size int64, fn func(from, to int64) error) error {
 	if from > to {
 		return fmt.Errorf("from must less than to")

@@ -1,10 +1,13 @@
 module github.com/gotomicro/cetus/x
 
-go 1.20
+go 1.21.0
+
+toolchain go1.22.3
 
 require (
 	github.com/gotomicro/cetus/l v0.0.0-20230718164245-d74413670cc2
 	github.com/gotomicro/ego v1.1.12
+	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.8.4
 )
 
