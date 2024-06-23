@@ -15,7 +15,7 @@ func TestNewWindowsManager(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *windowsManager
+		want *WindowsManager
 	}{
 		// TODO: Add test cases.
 		{

@@ -51,8 +51,8 @@ func (d *Debounce) addEvent(event string) {
 	d.timer = time.AfterFunc(d.windowDuration, d.pushEvent)
 }
 
-// windowsManager manages multiple documents and their debounceMap
-type windowsManager struct {
+// WindowsManager manages multiple documents and their debounceMap
+type WindowsManager struct {
 	debounceMap        sync.Map
 	windowDuration     time.Duration
 	cleanupInterval    time.Duration
@@ -61,8 +61,8 @@ type windowsManager struct {
 }
 
 // NewWindowsManager creates a new windowsManager
-func NewWindowsManager(windowDuration, cleanupInterval, inactivityDuration time.Duration) *windowsManager {
-	dm := &windowsManager{
+func NewWindowsManager(windowDuration, cleanupInterval, inactivityDuration time.Duration) *WindowsManager {
+	dm := &WindowsManager{
 		windowDuration:     windowDuration,
 		cleanupInterval:    cleanupInterval,
 		inactivityDuration: inactivityDuration,
@@ -72,24 +72,24 @@ func NewWindowsManager(windowDuration, cleanupInterval, inactivityDuration time.
 }
 
 // AddWindow adds a new document with the given ID
-func (dm *windowsManager) AddWindow(docID string, pushFunc func(string)) {
+func (dm *WindowsManager) AddWindow(docID string, pushFunc func(string)) {
 	dm.debounceMap.Store(docID, NewDebounce(dm.windowDuration, pushFunc))
 }
 
 // RemoveWindow removes the document with the given ID
-func (dm *windowsManager) RemoveWindow(docID string) {
+func (dm *WindowsManager) RemoveWindow(docID string) {
 	dm.debounceMap.Delete(docID)
 }
 
 // AddEvent adds an event to the specified document
-func (dm *windowsManager) AddEvent(windowID string, event string) {
+func (dm *WindowsManager) AddEvent(windowID string, event string) {
 	if debounce, ok := dm.debounceMap.Load(windowID); ok {
 		debounce.(*Debounce).addEvent(event)
 	}
 }
 
 // startCleanupRoutine starts a goroutine that periodically cleans up inactive documents
-func (dm *windowsManager) startCleanupRoutine() {
+func (dm *WindowsManager) startCleanupRoutine() {
 	for {
 		time.Sleep(dm.cleanupInterval)
 		now := time.Now()
