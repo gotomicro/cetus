@@ -28,31 +28,30 @@ func TestNewWindowsManager(t *testing.T) {
 			want: nil,
 		},
 	}
-	pushFunc1 := func(event string) {
-		fmt.Println("Pushing 1 event:", event)
-		fmt.Println(time.Now().Unix())
-	}
-	pushFunc2 := func(event string) {
-		fmt.Println("Pushing 2 event:", event)
-		fmt.Println(time.Now().Unix())
-	}
-	pushFunc3 := func(event string) {
-		fmt.Println("Pushing 3 event:", event)
-		fmt.Println(time.Now().Unix())
-	}
-	pushFunc4 := func(event string) {
-		fmt.Println("Pushing 4 event:", event)
+	// pushFunc1 := func(event string) {
+	// 	fmt.Println("Pushing 1 event:", event)
+	// 	fmt.Println(time.Now().Unix())
+	// }
+	// pushFunc2 := func(event string) {
+	// 	fmt.Println("Pushing 2 event:", event)
+	// 	fmt.Println(time.Now().Unix())
+	// }
+	// pushFunc3 := func(event string) {
+	// 	fmt.Println("Pushing 3 event:", event)
+	// 	fmt.Println(time.Now().Unix())
+	// }
+	// pushFunc4 := func(event string) {
+	// 	fmt.Println("Pushing 4 event:", event)
+	// 	fmt.Println(time.Now().Unix())
+	// }
+
+	pushFuncAll := func(event string) {
+		fmt.Println("Pushing all event:", event)
 		fmt.Println(time.Now().Unix())
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			docManager := NewWindowsManager(tt.args.windowDuration, tt.args.cleanupInterval, tt.args.inactivityDuration)
-			// Adding documents
-			docManager.AddWindow("doc1", pushFunc1)
-			docManager.AddWindow("doc2", pushFunc2)
-			docManager.AddWindow("doc3", pushFunc3)
-			docManager.AddWindow("doc4", pushFunc4)
-
+			docManager := NewWindowsManager(tt.args.windowDuration, tt.args.cleanupInterval, tt.args.inactivityDuration, pushFuncAll)
 			// Simulating events being added to different documents
 			go func() {
 				docManager.AddEvent("doc1", fmt.Sprintf("Edit 1 for Document 1, %d", time.Now().Unix()))

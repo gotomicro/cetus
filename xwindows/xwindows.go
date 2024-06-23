@@ -61,30 +61,28 @@ type WindowsManager struct {
 }
 
 // NewWindowsManager creates a new windowsManager
-func NewWindowsManager(windowDuration, cleanupInterval, inactivityDuration time.Duration) *WindowsManager {
+func NewWindowsManager(windowDuration, cleanupInterval, inactivityDuration time.Duration, pushFunc func(string)) *WindowsManager {
 	dm := &WindowsManager{
 		windowDuration:     windowDuration,
 		cleanupInterval:    cleanupInterval,
 		inactivityDuration: inactivityDuration,
+		pushFunc:           pushFunc,
 	}
 	go dm.startCleanupRoutine()
 	return dm
 }
 
-// AddWindow adds a new document with the given ID
-func (dm *WindowsManager) AddWindow(docID string, pushFunc func(string)) {
-	dm.debounceMap.Store(docID, NewDebounce(dm.windowDuration, pushFunc))
-}
-
 // RemoveWindow removes the document with the given ID
-func (dm *WindowsManager) RemoveWindow(docID string) {
-	dm.debounceMap.Delete(docID)
+func (dm *WindowsManager) RemoveWindow(windowID string) {
+	dm.debounceMap.Delete(windowID)
 }
 
 // AddEvent adds an event to the specified document
 func (dm *WindowsManager) AddEvent(windowID string, event string) {
 	if debounce, ok := dm.debounceMap.Load(windowID); ok {
 		debounce.(*Debounce).addEvent(event)
+	} else {
+		dm.debounceMap.Store(windowID, NewDebounce(dm.windowDuration, dm.pushFunc))
 	}
 }
 
