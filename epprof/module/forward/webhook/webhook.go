@@ -10,7 +10,7 @@ import (
 	"github.com/gotomicro/cetus/epprof/model/dto"
 )
 
-func Webhook(fw dto.Webhook, attach dto.AttachInfo) {
+func Webhook(fw dto.Webhook, attach dto.LogInfo) {
 	client := resty.New()
 	r := client.R().SetHeader("Content-Type", "application/json")
 	for k, v := range fw.Headers {
@@ -23,7 +23,7 @@ func Webhook(fw dto.Webhook, attach dto.AttachInfo) {
 			return
 		}
 		fw.Body["addr"] = ip + ":9003"
-		elog.Info("xcheck", l.A("size", attach.CurrentAbs), l.A("attach", attach), l.S("ip", ip), l.A("body", fw.Body))
+		elog.Info("xcheck", l.A("attach", attach), l.S("ip", ip), l.A("body", fw.Body))
 	}
 	r.SetBody(fw.Body)
 	resp, err := r.Post(fw.Url)

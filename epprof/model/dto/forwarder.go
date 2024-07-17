@@ -10,9 +10,13 @@ type Webhook struct {
 	Body    map[string]interface{} `json:"body"`
 }
 
-type AttachInfo struct {
-	CurrentAbs  uint64 `json:"currentAbs,omitempty"`
-	CurrentDiff int    `json:"currentDiff,omitempty"`
+type LogInfo struct {
+	// cpu
+	CPUPercent float64 `json:"cpuPercent,omitempty"`
+
+	// mem
+	MemoryAbs  uint64 `json:"memoryAbs,omitempty"`
+	MemoryDiff int    `json:"memoryDiff,omitempty"`
 
 	// Rule
 	OptAbs            uint64 `json:"optAbs,omitempty"`

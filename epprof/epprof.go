@@ -17,6 +17,7 @@ type Epprof struct {
 	memCoolingTime time.Time
 
 	Forwarder dto.Forwarder
+	monitor   monitor.Monitor
 }
 
 // New is the entry of epprof
@@ -27,7 +28,8 @@ type Epprof struct {
 // 5. upload to oss
 func New(opts ...Option) (*Epprof, error) {
 	e := &Epprof{
-		opts: newOptions(),
+		opts:    newOptions(),
+		monitor: monitor.New(),
 	}
 	for _, o := range opts {
 		if err := o.apply(e.opts); err != nil {
@@ -66,27 +68,44 @@ func (a *Epprof) Start() error {
 }
 
 func (a *Epprof) calculateData() {
-	current, usedPercent := monitor.ReadMemStats()
-
-	if a.memAvg == 0 {
-		a.memAvg = current
-		return
+	logInfo := dto.LogInfo{
+		OptAbs:            a.opts.memOpts.TriggerValue,
+		OptDiff:           a.opts.memOpts.TriggerDiff,
+		OptCoolingTimeSec: int(a.opts.memOpts.CoolingTime.Seconds()),
 	}
-	diff := (float64(current) - float64(a.memAvg)) * 100 / float64(a.memAvg)
-	elog.Debug("cal", l.U64("avg", a.memAvg), l.U64("size", current), l.F64("diffPercent", diff), l.F64("usedPercent", usedPercent), l.A("memOpts", a.opts.memOpts))
-	if current >= a.opts.memOpts.TriggerValue && uint64(diff) >= a.opts.memOpts.TriggerDiff {
-		a.pprof(dto.AttachInfo{
-			CurrentAbs:        current,
-			CurrentDiff:       int(diff),
-			OptAbs:            a.opts.memOpts.TriggerValue,
-			OptDiff:           a.opts.memOpts.TriggerDiff,
-			OptCoolingTimeSec: int(a.opts.memOpts.CoolingTime.Seconds()),
-		})
+	if a.isReportCPU(&logInfo) || a.isReportMemory(&logInfo) {
+		a.pprof(logInfo)
 	}
-	a.memAvg = (a.memAvg + current) / 2
 }
 
-func (a *Epprof) pprof(attach dto.AttachInfo) {
+func (a *Epprof) isReportCPU(logInfo *dto.LogInfo) bool {
+	usedPercent := a.monitor.ReadCPUStats()
+	elog.Debug("cal", l.S("step", "isReportCPU"), l.F64("usedPercent", usedPercent))
+	if usedPercent > 0.8 {
+		logInfo.CPUPercent = usedPercent
+		return true
+	}
+	return false
+}
+
+func (a *Epprof) isReportMemory(logInfo *dto.LogInfo) bool {
+	current, usedPercent := a.monitor.ReadMemStats()
+	if a.memAvg == 0 {
+		a.memAvg = current
+		return false
+	}
+	diff := (float64(current) - float64(a.memAvg)) * 100 / float64(a.memAvg)
+	elog.Debug("cal", l.S("step", "isReportMemory"), l.U64("avg", a.memAvg), l.U64("size", current), l.F64("diffPercent", diff), l.F64("usedPercent", float64(usedPercent)), l.A("memOpts", a.opts.memOpts))
+	if (current >= a.opts.memOpts.TriggerValue && uint64(diff) >= a.opts.memOpts.TriggerDiff) || usedPercent > 0.8 {
+		logInfo.MemoryAbs = current
+		logInfo.MemoryDiff = int(diff)
+		return true
+	}
+	a.memAvg = (a.memAvg + current) / 2
+	return false
+}
+
+func (a *Epprof) pprof(attach dto.LogInfo) {
 	if a.memCoolingTime.After(time.Now()) {
 		elog.Info("coolingTime")
 		return

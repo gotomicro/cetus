@@ -19,7 +19,7 @@ func main() {
 	_ = a.EnableMem().Start()
 	go func() {
 		for i := 0; i < 100; i++ {
-			// memoryLeaking()
+			memoryLeaking()
 			time.Sleep(time.Second)
 		}
 	}()
