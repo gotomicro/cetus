@@ -13,10 +13,8 @@ import (
 func main() {
 	elog.DefaultLogger.SetLevel(elog.DebugLevel)
 
-	a, _ := epprof.New(
-		epprof.WithMemOpts(0, 0, 0, 0),
-	)
-	_ = a.EnableMem().Start()
+	a, _ := epprof.New()
+	_ = a.Enable().Start()
 	go func() {
 		for i := 0; i < 100; i++ {
 			memoryLeaking()

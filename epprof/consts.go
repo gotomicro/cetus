@@ -10,4 +10,6 @@ const (
 	defaultMemTriggerValue   = 128 // 128MB
 	defaultMemTriggerPercent = 80  // 80%
 	defaultMemTriggerDiff    = 10  // 10%
+
+	defaultCPUTriggerPercent = 80 // 80%
 )

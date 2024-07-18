@@ -31,4 +31,5 @@ func Webhook(fw dto.Webhook, attach dto.LogInfo) {
 		elog.Error("forward", elog.FieldEvent("post"), l.E(err), l.A("fw", fw), l.S("resp", resp.String()))
 		return
 	}
+	elog.Debug("forward", elog.FieldEvent("post"), l.A("fw", fw), l.S("resp", resp.String()))
 }

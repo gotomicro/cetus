@@ -48,9 +48,9 @@ func (a *Epprof) Apply(opts ...Option) error {
 	return nil
 }
 
-// EnableMem enables the mem dump.
-func (a *Epprof) EnableMem() *Epprof {
-	a.opts.memOpts.Enable = true
+// Enable enables the mem dump.
+func (a *Epprof) Enable() *Epprof {
+	a.opts.cubeOpts.Enable = true
 	return a
 }
 
@@ -69,9 +69,7 @@ func (a *Epprof) Start() error {
 
 func (a *Epprof) calculateData() {
 	logInfo := dto.LogInfo{
-		OptAbs:            a.opts.memOpts.TriggerValue,
-		OptDiff:           a.opts.memOpts.TriggerDiff,
-		OptCoolingTimeSec: int(a.opts.memOpts.CoolingTime.Seconds()),
+		Options: a.opts.cubeOpts.String(),
 	}
 	if a.isReportCPU(&logInfo) || a.isReportMemory(&logInfo) {
 		a.pprof(logInfo)
@@ -80,8 +78,8 @@ func (a *Epprof) calculateData() {
 
 func (a *Epprof) isReportCPU(logInfo *dto.LogInfo) bool {
 	usedPercent := a.monitor.ReadCPUStats()
-	elog.Debug("cal", l.S("step", "isReportCPU"), l.F64("usedPercent", usedPercent))
-	if usedPercent > 0.8 {
+	elog.Debug("cal", l.S("step", "isReportCPU"), l.F64("usedPercent", usedPercent), l.A("cubeOpts", a.opts.cubeOpts))
+	if uint64(usedPercent) > a.opts.cubeOpts.TriggerCPUPercent {
 		logInfo.CPUPercent = usedPercent
 		return true
 	}
@@ -95,8 +93,8 @@ func (a *Epprof) isReportMemory(logInfo *dto.LogInfo) bool {
 		return false
 	}
 	diff := (float64(current) - float64(a.memAvg)) * 100 / float64(a.memAvg)
-	elog.Debug("cal", l.S("step", "isReportMemory"), l.U64("avg", a.memAvg), l.U64("size", current), l.F64("diffPercent", diff), l.F64("usedPercent", float64(usedPercent)), l.A("memOpts", a.opts.memOpts))
-	if (current >= a.opts.memOpts.TriggerValue && uint64(diff) >= a.opts.memOpts.TriggerDiff) || usedPercent > 0.8 {
+	elog.Debug("cal", l.S("step", "isReportMemory"), l.U64("avg", a.memAvg), l.U64("size", current), l.F64("diffPercent", diff), l.F64("usedPercent", float64(usedPercent)), l.A("cubeOpts", a.opts.cubeOpts))
+	if (current >= a.opts.cubeOpts.TriggerValue && uint64(diff) >= a.opts.cubeOpts.TriggerDiff) || uint64(usedPercent) > a.opts.cubeOpts.TriggerMemPercent {
 		logInfo.MemoryAbs = current
 		logInfo.MemoryDiff = int(diff)
 		return true
@@ -110,6 +108,6 @@ func (a *Epprof) pprof(attach dto.LogInfo) {
 		elog.Info("coolingTime")
 		return
 	}
-	a.memCoolingTime = time.Now().Add(a.opts.memOpts.CoolingTime)
+	a.memCoolingTime = time.Now().Add(a.opts.cubeOpts.CoolingTime)
 	webhook.Webhook(a.Forwarder.WebHook, attach)
 }

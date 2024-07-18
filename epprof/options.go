@@ -1,11 +1,12 @@
 package epprof
 
 import (
+	"encoding/json"
 	"time"
 )
 
 type options struct {
-	memOpts *cubeOption
+	cubeOpts *cubeOption
 }
 
 type Option interface {
@@ -20,51 +21,75 @@ func (f optionFunc) apply(opts *options) error {
 
 func newOptions() *options {
 	return &options{
-		memOpts: newMemOptions(),
+		cubeOpts: newMemOptions(),
 	}
 }
 
 func newMemOptions() *cubeOption {
-	return newCubeOpts(defaultMemTriggerValue, defaultMemTriggerPercent, defaultMemTriggerDiff, defaultCoolingTime)
+	return newCubeOpts(defaultMemTriggerValue, defaultMemTriggerPercent, defaultMemTriggerDiff, defaultCPUTriggerPercent, defaultCoolingTime)
 }
 
-func WithMemOpts(value, percent, diff uint64, coolingTime time.Duration) Option {
+func WithMemOpts(value, memPercent, memDiff uint64, coolingTime time.Duration) Option {
 	return optionFunc(func(opts *options) error {
-		opts.memOpts.Set(value, percent, diff, coolingTime)
+		opts.cubeOpts.Set(value, memPercent, memDiff, coolingTime)
+		return nil
+	})
+}
+
+func WithCPUOpts(percent uint64) Option {
+	return optionFunc(func(opts *options) error {
+		opts.cubeOpts.SetCPU(percent)
 		return nil
 	})
 }
 
 type cubeOption struct {
-	Enable         bool
-	TriggerValue   uint64
-	TriggerPercent uint64
-	TriggerDiff    uint64
-	CoolingTime    time.Duration
+	Enable            bool
+	TriggerValue      uint64
+	TriggerMemPercent uint64
+	TriggerCPUPercent uint64
+	TriggerDiff       uint64
+	CoolingTime       time.Duration
 }
 
-func newCubeOpts(triggerValue, triggerPercent, triggerDiff uint64, coolingTime time.Duration) *cubeOption {
+func newCubeOpts(triggerValue, triggerMemPercent, triggerDiff, triggerCPUPercent uint64, coolingTime time.Duration) *cubeOption {
 	return &cubeOption{
-		Enable:         false,
-		TriggerValue:   triggerValue,
-		TriggerPercent: triggerPercent,
-		TriggerDiff:    triggerDiff,
-		CoolingTime:    coolingTime,
+		Enable:            false,
+		TriggerValue:      triggerValue,
+		TriggerMemPercent: triggerMemPercent,
+		TriggerDiff:       triggerDiff,
+		TriggerCPUPercent: triggerCPUPercent,
+		CoolingTime:       coolingTime,
 	}
 }
 
-func (cube *cubeOption) Set(value, percent, diff uint64, coolingTime time.Duration) {
+func (cube *cubeOption) SetCPU(percent uint64) {
+	if percent == 0 {
+		percent = defaultCPUTriggerPercent
+	}
+	cube.TriggerCPUPercent = percent
+}
+
+func (cube *cubeOption) Set(value, memPercent, memDiff uint64, coolingTime time.Duration) {
 	if coolingTime == 0 {
 		coolingTime = defaultCoolingTime
 	}
 	if value == 0 {
 		value = defaultMemTriggerValue
 	}
-	if diff == 0 {
-		diff = defaultMemTriggerDiff
+	if memDiff == 0 {
+		memDiff = defaultMemTriggerDiff
+	}
+	if memPercent == 0 {
+		memPercent = defaultMemTriggerPercent
 	}
 	cube.TriggerValue = value
-	cube.TriggerPercent = percent
-	cube.TriggerDiff = diff
+	cube.TriggerMemPercent = memPercent
+	cube.TriggerDiff = memDiff
 	cube.CoolingTime = coolingTime
+}
+
+func (cube *cubeOption) String() string {
+	tmp, _ := json.Marshal(cube)
+	return string(tmp)
 }

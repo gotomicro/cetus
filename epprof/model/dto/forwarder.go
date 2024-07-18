@@ -19,7 +19,5 @@ type LogInfo struct {
 	MemoryDiff int    `json:"memoryDiff,omitempty"`
 
 	// Rule
-	OptAbs            uint64 `json:"optAbs,omitempty"`
-	OptDiff           uint64 `json:"optDiff,omitempty"`
-	OptCoolingTimeSec int    `json:"optCoolingTimeSec,omitempty"`
+	Options string `json:"opts,omitempty"`
 }
