@@ -65,8 +65,10 @@ func (m *gopsutil) ReadCPUStats() float64 {
 			err = m.refreshProcess()
 			if err != nil {
 				elog.Error("failedToRefreshProcess", l.E(err))
+				return 0
 			}
 		}
+		elog.Error("failedToReadCPUStats", l.E(err))
 		return 0
 	}
 	return stats
