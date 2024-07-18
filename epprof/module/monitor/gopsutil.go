@@ -2,7 +2,6 @@ package monitor
 
 import (
 	"os"
-	"time"
 
 	"github.com/gotomicro/cetus/l"
 	"github.com/gotomicro/ego/core/elog"
@@ -59,7 +58,14 @@ func (m *gopsutil) ReadMemStats() (uint64, float32) {
 
 // ReadCPUStats unit is MB
 func (m *gopsutil) ReadCPUStats() float64 {
-	stats, err := m.p.Percent(1 * time.Second)
+	// stats, err := m.p.Percent(1 * time.Second)
+	stats, err := m.p.CPUPercent()
+	// t, _ := m.p.CPUPercent()
+	// tt, _ := m.p.Times()
+	//
+	// fmt.Printf("stats: %v\n", stats)
+	// fmt.Printf("t: %v\n", t)
+	// fmt.Printf("tt: %v\n", tt)
 	if err != nil {
 		if errors.Is(err, process.ErrorProcessNotRunning) {
 			err = m.refreshProcess()
