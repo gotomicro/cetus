@@ -54,6 +54,7 @@ func (p Pongo2) Instance(name string, data interface{}) render.Render {
 }
 
 func (r Render) Render(w http.ResponseWriter) error {
+	r.WriteContentType(w)
 	c := pongo2.Context(r.Data.(Context))
 	return r.Template.ExecuteWriter(c, w)
 }
