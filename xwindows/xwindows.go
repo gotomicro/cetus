@@ -82,7 +82,9 @@ func (dm *WindowsManager) AddEvent(windowID string, event string) {
 	if debounce, ok := dm.debounceMap.Load(windowID); ok {
 		debounce.(*Debounce).addEvent(event)
 	} else {
-		dm.debounceMap.Store(windowID, NewDebounce(dm.windowDuration, dm.pushFunc))
+		nd := NewDebounce(dm.windowDuration, dm.pushFunc)
+		nd.addEvent(event)
+		dm.debounceMap.Store(windowID, nd)
 	}
 }
 
