@@ -128,3 +128,12 @@ func Strings2Map(ss []string) map[string]struct{} {
 	}
 	return res
 }
+
+func IsSliceContain(slice []string, v string) bool {
+	for _, vv := range slice {
+		if vv == v {
+			return true
+		}
+	}
+	return false
+}
