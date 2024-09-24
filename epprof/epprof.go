@@ -77,6 +77,9 @@ func (a *Epprof) calculateData() {
 }
 
 func (a *Epprof) isReportCPU(logInfo *dto.LogInfo) bool {
+	if a.opts.cubeOpts.TriggerCPUPercent == 0 {
+		return false
+	}
 	usedPercent := a.monitor.ReadCPUStats()
 	elog.Debug("cal", l.S("step", "isReportCPU"), l.F64("usedPercent", usedPercent), l.A("cubeOpts", a.opts.cubeOpts))
 	if uint64(usedPercent) > a.opts.cubeOpts.TriggerCPUPercent {
@@ -87,6 +90,9 @@ func (a *Epprof) isReportCPU(logInfo *dto.LogInfo) bool {
 }
 
 func (a *Epprof) isReportMemory(logInfo *dto.LogInfo) bool {
+	if a.opts.cubeOpts.TriggerValue == 0 {
+		return false
+	}
 	current, usedPercent := a.monitor.ReadMemStats()
 	if a.memAvg == 0 {
 		a.memAvg = current
@@ -105,7 +111,7 @@ func (a *Epprof) isReportMemory(logInfo *dto.LogInfo) bool {
 
 func (a *Epprof) pprof(attach dto.LogInfo) {
 	if a.memCoolingTime.After(time.Now()) {
-		elog.Info("coolingTime")
+		elog.Info("coolingTime", l.A("attach", attach), l.A("opts", a.opts))
 		return
 	}
 	a.memCoolingTime = time.Now().Add(a.opts.cubeOpts.CoolingTime)
