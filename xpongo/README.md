@@ -1,3 +1,6 @@
+
+# How to Use
+
 ```azure
 	e.HTMLRender = xpongo.New(
 		xpongo.WithDebug(gin.IsDebugging()),

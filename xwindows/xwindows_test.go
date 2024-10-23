@@ -22,7 +22,7 @@ func TestNewWindowsManager(t *testing.T) {
 			name: "test-1",
 			args: args{
 				windowDuration:     30 * time.Second,
-				cleanupInterval:    10 * time.Second,
+				cleanupInterval:    20 * time.Second,
 				inactivityDuration: 1 * time.Minute,
 			},
 			want: nil,

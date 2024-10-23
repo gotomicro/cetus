@@ -6,6 +6,7 @@ import (
 	"runtime"
 
 	"github.com/gotomicro/cetus/l"
+	"github.com/pkg/errors"
 )
 
 // Go goroutine
@@ -47,5 +48,15 @@ func Page(from, to, size int64, fn func(from, to int64) error) error {
 			return err
 		}
 	}
+	return nil
+}
+
+func SafeFunc(fn func()) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = errors.New(fmt.Sprint("Recovered from panic:", r))
+		}
+	}()
+	fn()
 	return nil
 }
