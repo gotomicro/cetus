@@ -4,9 +4,8 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"log"
 
-	"github.com/gotomicro/cetus/l"
-	"github.com/gotomicro/ego/core/elog"
 	"github.com/pkg/errors"
 )
 
@@ -38,7 +37,7 @@ func IsGray(key string, percent uint64) bool {
 	}
 	hashedNumber, err := hashStringToNumber(key)
 	if err != nil {
-		elog.Error("xgray", elog.FieldMethod("IsGray"), l.S("key", key), l.E(err))
+		log.Printf("hashStringToNumber failed: %s", err.Error())
 		return false
 	}
 	return hashedNumber%100 < percent
