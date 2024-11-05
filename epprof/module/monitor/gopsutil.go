@@ -1,11 +1,12 @@
 package monitor
 
 import (
+	"errors"
+	"fmt"
 	"os"
 
 	"github.com/gotomicro/cetus/l"
 	"github.com/gotomicro/ego/core/elog"
-	"github.com/pkg/errors"
 	"github.com/shirou/gopsutil/v4/process"
 )
 
@@ -28,7 +29,7 @@ func (m *gopsutil) refreshProcess() error {
 	}
 	p, err := process.NewProcess(int32(os.Getpid()))
 	if err != nil {
-		return errors.Wrapf(err, "failed to get process")
+		return fmt.Errorf("failedToNewProcess error: %w", err)
 	}
 	m.p = p
 	return nil

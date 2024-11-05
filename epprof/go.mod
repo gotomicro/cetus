@@ -7,7 +7,6 @@ require (
 	github.com/gotomicro/cetus/l v0.0.0-20230913025802-aba09cb8158d
 	github.com/gotomicro/cetus/xnet v0.0.0-20230720035012-098d6a2cbd7b
 	github.com/gotomicro/ego v1.1.11
-	github.com/pkg/errors v0.9.1
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/shirou/gopsutil/v4 v4.24.6
 )

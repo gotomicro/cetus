@@ -81,7 +81,6 @@ func (a *Epprof) isReportCPU(logInfo *dto.LogInfo) bool {
 		return false
 	}
 	usedPercent := a.monitor.ReadCPUStats()
-	elog.Debug("cal", l.S("step", "isReportCPU"), l.F64("usedPercent", usedPercent), l.A("cubeOpts", a.opts.cubeOpts))
 	if uint64(usedPercent) > a.opts.cubeOpts.TriggerCPUPercent {
 		logInfo.CPUPercent = usedPercent
 		return true
@@ -99,7 +98,6 @@ func (a *Epprof) isReportMemory(logInfo *dto.LogInfo) bool {
 		return false
 	}
 	diff := (float64(current) - float64(a.memAvg)) * 100 / float64(a.memAvg)
-	elog.Debug("cal", l.S("step", "isReportMemory"), l.U64("avg", a.memAvg), l.U64("size", current), l.F64("diffPercent", diff), l.F64("usedPercent", float64(usedPercent)), l.A("cubeOpts", a.opts.cubeOpts))
 	if (current >= a.opts.cubeOpts.TriggerValue && uint64(diff) >= a.opts.cubeOpts.TriggerDiff) || uint64(usedPercent) > a.opts.cubeOpts.TriggerMemPercent {
 		logInfo.MemoryAbs = current
 		logInfo.MemoryDiff = int(diff)
