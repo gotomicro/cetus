@@ -22,6 +22,27 @@ type GetOptions struct {
 	Headers     map[string]string
 }
 
+// Head send get request with options
+func Head(client *resty.Client, url string, options *GetOptions) (*resty.Response, error) {
+	httpReq := client.R()
+
+	if options != nil {
+		if options.QueryParams != nil {
+			httpReq.SetQueryParams(options.QueryParams)
+		}
+
+		if options.Headers != nil {
+			httpReq.SetHeaders(options.Headers)
+		}
+
+		if options.Context != nil {
+			httpReq.SetContext(options.Context)
+		}
+	}
+
+	return httpReq.Head(url)
+}
+
 // Get send get request with options
 func Get(client *resty.Client, url string, options *GetOptions) (*resty.Response, error) {
 	httpReq := client.R()
