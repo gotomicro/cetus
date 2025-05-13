@@ -21,8 +21,8 @@ func TestNewWindowsManager(t *testing.T) {
 		{
 			name: "test-1",
 			args: args{
-				windowDuration:     30 * time.Second,
-				cleanupInterval:    20 * time.Second,
+				windowDuration:     10 * time.Second,
+				cleanupInterval:    3 * time.Second,
 				inactivityDuration: 1 * time.Minute,
 			},
 			want: nil,
@@ -45,9 +45,8 @@ func TestNewWindowsManager(t *testing.T) {
 	// 	fmt.Println(time.Now().Unix())
 	// }
 
-	pushFuncAll := func(event string) {
-		fmt.Println("Pushing all event:", event)
-		fmt.Println(time.Now().Unix())
+	pushFuncAll := func(event string, windowID string) {
+		fmt.Println("Pushing all event:", event, windowID, time.Now().Format("2006-01-02 15:04:05"))
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -55,26 +54,32 @@ func TestNewWindowsManager(t *testing.T) {
 			// Simulating events being added to different documents
 			go func() {
 				docManager.AddEvent("doc1", fmt.Sprintf("Edit 1 for Document 1, %d", time.Now().Unix()))
-				time.Sleep(10 * time.Second)
+				time.Sleep(8 * time.Second)
 				docManager.AddEvent("doc1", fmt.Sprintf("Edit 2 for Document 1, %d", time.Now().Unix()))
 
 			}()
 
 			go func() {
 				docManager.AddEvent("doc2", fmt.Sprintf("Edit 1 for Document 2, %d", time.Now().Unix()))
-				time.Sleep(20 * time.Second)
+				time.Sleep(11 * time.Second)
 				docManager.AddEvent("doc2", fmt.Sprintf("Edit 2 for Document 2, %d", time.Now().Unix()))
 			}()
 
 			go func() {
 				docManager.AddEvent("doc3", fmt.Sprintf("Edit 1 for Document 3, %d", time.Now().Unix()))
-				time.Sleep(30 * time.Second)
+				time.Sleep(6 * time.Second)
 				docManager.AddEvent("doc3", fmt.Sprintf("Edit 2 for Document 3, %d", time.Now().Unix()))
+				docManager.AddEvent("doc3", fmt.Sprintf("Edit 3 for Document 3, %d", time.Now().Unix()))
+				docManager.AddEvent("doc3", fmt.Sprintf("Edit 4 for Document 3, %d", time.Now().Unix()))
+				docManager.AddEvent("doc3", fmt.Sprintf("Edit 5 for Document 3, %d", time.Now().Unix()))
+				docManager.AddEvent("doc3", fmt.Sprintf("Edit 6 for Document 3, %d", time.Now().Unix()))
+				time.Sleep(6 * time.Second)
+				docManager.AddEvent("doc3", fmt.Sprintf("Edit 7 for Document 3, %d", time.Now().Unix()))
 			}()
 
 			go func() {
 				docManager.AddEvent("doc4", fmt.Sprintf("Edit 1 for Document 4, %d", time.Now().Unix()))
-				time.Sleep(60 * time.Second)
+				time.Sleep(15 * time.Second)
 				docManager.AddEvent("doc4", fmt.Sprintf("Edit 2 for Document 4, %d", time.Now().Unix()))
 			}()
 
