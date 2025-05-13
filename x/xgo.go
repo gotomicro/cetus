@@ -6,6 +6,7 @@ import (
 	"runtime"
 
 	"github.com/gotomicro/cetus/l"
+	"github.com/gotomicro/ego/core/elog"
 	"github.com/pkg/errors"
 )
 
@@ -14,18 +15,27 @@ func Go(fn func()) {
 	go func() { _ = try(fn, nil) }()
 }
 
-func Recover() (err error) {
-	if r := recover(); r != nil {
-		es := fmt.Sprintf("recover from: %v", r)
-		pc, file, line, ok := runtime.Caller(3) // 3 表示向上回溯 3 层
-		if ok {
-			err = errors.New(fmt.Sprintf("%s, panic occurred in %s[%s:%d]\n", es, runtime.FuncForPC(pc).Name(), file, line))
-		} else {
-			err = errors.New(es)
+// RunWithRecover
+//
+//	@Description: Filter Log Keywords RunWithRecover
+//	@param f
+func RunWithRecover(f func()) {
+	defer func() {
+		if r := recover(); r != nil {
+			var err error
+			es := fmt.Sprintf("recover from: %v", r)
+			pc, file, line, ok := runtime.Caller(3) // 3 表示向上回溯 3 层
+			if ok {
+				err = errors.New(fmt.Sprintf("%s, panic occurred in %s[%s:%d]\n", es, runtime.FuncForPC(pc).Name(), file, line))
+			} else {
+				err = errors.New(es)
+			}
+			if err != nil {
+				elog.Error("RunWithRecover", l.E(err))
+			}
 		}
-		return err
-	}
-	return nil
+	}()
+	f()
 }
 
 func try(fn func(), cleaner func()) (ret error) {
