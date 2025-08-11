@@ -12,15 +12,20 @@ const maxWindowDuration = 30 * time.Minute
 type Debounce struct {
 	windowDuration time.Duration
 	timer          *time.Timer
-	latestEvent    string
+	latestEvent    Event
 	windowID       string
 	lock           sync.Mutex
 	lastActiveTime time.Time
-	pushFunc       func(string, string)
+	pushFunc       func(string, Event)
+}
+
+type Event struct {
+	Headers map[string]string
+	Value   string
 }
 
 // NewDebounce creates a new Debounce
-func NewDebounce(windowDuration time.Duration, pushFunc func(string, string), windowID string) *Debounce {
+func NewDebounce(windowDuration time.Duration, pushFunc func(string, Event), windowID string) *Debounce {
 	return &Debounce{
 		windowDuration: windowDuration,
 		lastActiveTime: time.Now(),
@@ -34,9 +39,9 @@ func (d *Debounce) pushEvent() {
 	d.lock.Lock()
 	defer d.lock.Unlock()
 
-	if d.latestEvent != "" {
-		d.pushFunc(d.latestEvent, d.windowID)
-		d.latestEvent = ""
+	if d.latestEvent.Value != "" {
+		d.pushFunc(d.windowID, d.latestEvent)
+		d.latestEvent = Event{}
 	}
 
 	// 清空定时器，允许下一个事件创建新窗口
@@ -44,7 +49,7 @@ func (d *Debounce) pushEvent() {
 }
 
 // addEvent adds a new event and resets the timer
-func (d *Debounce) addEvent(event string) {
+func (d *Debounce) addEvent(event Event) {
 	d.lock.Lock()
 	defer d.lock.Unlock()
 
@@ -64,12 +69,12 @@ type WindowsManager struct {
 	windowDuration     time.Duration
 	cleanupInterval    time.Duration
 	inactivityDuration time.Duration
-	pushFunc           func(string, string)
+	pushFunc           func(string, Event)
 	stopCh             chan struct{}
 }
 
 // NewWindowsManager creates a new windowsManager
-func NewWindowsManager(windowDuration, cleanupInterval, inactivityDuration time.Duration, pushFunc func(string, string)) *WindowsManager {
+func NewWindowsManager(windowDuration, cleanupInterval, inactivityDuration time.Duration, pushFunc func(string, Event)) *WindowsManager {
 	if windowDuration > maxWindowDuration {
 		windowDuration = maxWindowDuration
 	}
@@ -104,7 +109,7 @@ func (dm *WindowsManager) RemoveWindow(windowID string) {
 }
 
 // AddEvent adds an event to the specified document
-func (dm *WindowsManager) AddEvent(windowID string, event string) {
+func (dm *WindowsManager) AddEvent(windowID string, event Event) {
 	if debounce, ok := dm.debounceMap.Load(windowID); ok {
 		debounce.(*Debounce).addEvent(event)
 	} else {

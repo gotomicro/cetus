@@ -14,7 +14,7 @@ const (
 func Millisecond() int64 {
 	return time.Now().UnixNano() / 1e6
 }
-
+\
 func Microsecond() int64 {
 	return time.Now().UnixNano() / 1e3
 }
