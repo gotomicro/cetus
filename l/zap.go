@@ -17,9 +17,16 @@ var (
 	U64 = zap.Uint64
 	F64 = zap.Float64
 	S   = zap.String
+	Ss  = zap.Strings
 	B   = zap.Bool
 	E   = zap.Error
 	A   = zap.Any
 	D   = zap.Duration
 	T   = zap.Time
+	BS  = zap.ByteString
+	Bi  = zap.Binary
 )
+
+func Tid(tid string) zap.Field {
+	return zap.String("tid", tid)
+}
